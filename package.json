@@ -46,7 +46,7 @@
     "react-style-proptype": "^3",
     "react-tooltip": "^3",
     "redux": "^3",
-    "scratch-render-fonts": "github:PenguinMod/penguinmod-render-fonts#master"
+    "scratch-render-fonts": "github:Wolowolf/penguinmod-render-fonts#4dda62c707f64505266aa62f7a6cc84f0e5812fd"
   },
   "devDependencies": {
     "@babel/preset-env": "7.14.8",
