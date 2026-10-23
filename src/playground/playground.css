@@ -1,6 +1,6 @@
 
 body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: var(--pm-font, "Atkinson Hyperlegible Next", sans-serif);
     margin: 0px;
 }
 

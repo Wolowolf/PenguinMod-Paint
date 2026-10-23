@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import FontDropdownComponent from '../components/font-dropdown/font-dropdown.jsx';
-import Fonts from '../lib/fonts';
 import {changeFont} from '../reducers/font';
 import {getSelectedLeafItems} from '../helper/selection';
 import confirmStyles from './confirmation.css';
@@ -17,23 +16,6 @@ class FontDropdown extends React.Component {
             'getFontName',
             'handleHoverCustom',
             'handleManageFonts',
-            'handleChangeFontSerif',
-            'handleChangeFontSansSerif',
-            'handleChangeFontHandwriting',
-            'handleChangeFontMarker',
-            'handleChangeFontCurly',
-            'handleChangeFontPixel',
-            'handleChangeFontPlayful',
-            'handleChangeFontBubbly',
-            'handleChangeFontTechnological',
-            'handleChangeFontBitsAndBytes',
-            'handleChangeFontArcade',
-            'handleChangeFontScratch',
-            'handleChangeFontArchivo',
-            'handleChangeFontArchivoBlack',
-            'handleChangeFontChinese',
-            'handleChangeFontJapanese',
-            'handleChangeFontKorean',
             'handleOpenDropdown',
             'handleClickOutsideDropdown',
             'setDropdown',
@@ -47,22 +29,6 @@ class FontDropdown extends React.Component {
         this.latestCustomFont = null;
     }
     getFontName (font) {
-        const NATIVE_FONTS = Object.values(Fonts);
-        if (NATIVE_FONTS.includes(font)) {
-            switch (font) {
-            case Fonts.CHINESE:
-                return '中文';
-            case Fonts.KOREAN:
-                return '한국어';
-            case Fonts.JAPANESE:
-                return '日本語';
-            case Fonts.SCRATCH:
-                return 'Branches';
-            default:
-                return font;
-            }
-        }
-
         const customFont = this.props.customFonts.find(i => i.family === font);
         if (customFont) {
             return customFont.name;
@@ -196,91 +162,6 @@ class FontDropdown extends React.Component {
         fr.readAsDataURL(blob);
     }
 
-    handleChangeFontSansSerif () {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.SANS_SERIF);
-        }
-    }
-    handleChangeFontSerif () {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.SERIF);
-        }
-    }
-    handleChangeFontHandwriting () {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.HANDWRITING);
-        }
-    }
-    handleChangeFontMarker () {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.MARKER);
-        }
-    }
-    handleChangeFontCurly () {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.CURLY);
-        }
-    }
-    handleChangeFontPixel () {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.PIXEL);
-        }
-    }
-    handleChangeFontPlayful () {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.PLAYFUL);
-        }
-    }
-    handleChangeFontBitsAndBytes() {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.BITSANDBYTES);
-        }
-    }
-    handleChangeFontBubbly() {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.BUBBLY);
-        }
-    }
-    handleChangeFontTechnological() {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.TECHNOLOGICAL);
-        }
-    }
-    handleChangeFontArcade() {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.ARCADE);
-        }
-    }
-    handleChangeFontArchivo() {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.ARCHIVO);
-        }
-    }
-    handleChangeFontArchivoBlack() {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.ARCHIVOBLACK);
-        }
-    }
-    handleChangeFontScratch() {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.SCRATCH);
-        }
-    }
-    handleChangeFontChinese () {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.CHINESE);
-        }
-    }
-    handleChangeFontJapanese () {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.JAPANESE);
-        }
-    }
-    handleChangeFontKorean () {
-        if (this.dropDown.isOpen()) {
-            this.props.changeFont(Fonts.KOREAN);
-        }
-    }
     handleChoose () {
         if (this.dropDown.isOpen()) {
             this.dropDown.handleClosePopover();
@@ -371,23 +252,6 @@ class FontDropdown extends React.Component {
                 onChooseCustom={this.handleChooseCustom}
                 onChooseExisting={this.handleChooseExisting}
                 onClickOutsideDropdown={this.handleClickOutsideDropdown}
-                onHoverChinese={this.handleChangeFontChinese}
-                onHoverCurly={this.handleChangeFontCurly}
-                onHoverHandwriting={this.handleChangeFontHandwriting}
-                onHoverJapanese={this.handleChangeFontJapanese}
-                onHoverKorean={this.handleChangeFontKorean}
-                onHoverMarker={this.handleChangeFontMarker}
-                onHoverPixel={this.handleChangeFontPixel}
-                onHoverPlayful={this.handleChangeFontPlayful}
-                onHoverBubbly={this.handleChangeFontBubbly}
-                onHoverBitsAndBytes={this.handleChangeFontBitsAndBytes}
-                onHoverTechnological={this.handleChangeFontTechnological}
-                onHoverArcade={this.handleChangeFontArcade}
-                onHoverArchivo={this.handleChangeFontArchivo}
-                onHoverArchivoBlack={this.handleChangeFontArchivoBlack}
-                onHoverScratch={this.handleChangeFontScratch}
-                onHoverSansSerif={this.handleChangeFontSansSerif}
-                onHoverSerif={this.handleChangeFontSerif}
                 onOpenDropdown={this.handleOpenDropdown}
                 customExists={this.latestCustomFont !== null}
                 customClass={this.latestCustomFont ? this.latestCustomFont.class : null}

@@ -98,7 +98,7 @@ class TextMode extends React.Component {
             this.props.onChangeStrokeColor(null);
         }
         if (!nextProps.font) {
-            this.props.changeFont(Fonts.SANS_SERIF);
+            this.props.changeFont(Fonts.ATKINSON_NEXT);
         }
         if (!nextProps.alignment) {
             this.props.changeAlignment("left");

@@ -30,176 +30,20 @@ const ModeToolsComponent = props => (
         enterExitTransitionDurationMs={60}
         popoverContent={
             <InputGroup className={styles.fontContextMenu}>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverSansSerif}
-                >
-                    <DisplayFont
-                        font={Fonts.SANS_SERIF}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverSerif}
-                >
-                    <DisplayFont
-                        font={Fonts.SERIF}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverHandwriting}
-                >
-                    <DisplayFont
-                        font={Fonts.HANDWRITING}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverMarker}
-                >
-                    <DisplayFont
-                        font={Fonts.MARKER}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverCurly}
-                >
-                    <DisplayFont
-                        font={Fonts.CURLY}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverPixel}
-                >
-                    <DisplayFont
-                        font={Fonts.PIXEL}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverPlayful}
-                >
-                    <DisplayFont
-                        font={Fonts.PLAYFUL}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverBubbly}
-                >
-                    <DisplayFont
-                        font={Fonts.BUBBLY}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverArcade}
-                >
-                    <DisplayFont
-                        font={Fonts.ARCADE}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverBitsAndBytes}
-                >
-                    <DisplayFont
-                        font={Fonts.BITSANDBYTES}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverTechnological}
-                >
-                    <DisplayFont
-                        font={Fonts.TECHNOLOGICAL}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverScratch}
-                >
-                    <DisplayFont
-                        font={Fonts.SCRATCH}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverArchivo}
-                >
-                    <DisplayFont
-                        font={Fonts.ARCHIVO}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverArchivoBlack}
-                >
-                    <DisplayFont
-                        font={Fonts.ARCHIVOBLACK}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverChinese}
-                >
-                    <DisplayFont
-                        font={Fonts.CHINESE}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverJapanese}
-                >
-                    <DisplayFont
-                        font={Fonts.JAPANESE}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
-                <Button
-                    className={classNames(styles.modMenuItem)}
-                    onClick={props.onChoose}
-                    onMouseOver={props.onHoverKorean}
-                >
-                    <DisplayFont
-                        font={Fonts.KOREAN}
-                        getFontName={props.getFontName}
-                    />
-                </Button>
+                {Object.values(Fonts).map(font => (
+                    <CustomFontButton
+                        key={font}
+                        font={font}
+                        className={classNames(styles.modMenuItem)}
+                        onClick={props.onChoose}
+                        onMouseOver={props.onHoverCustom}
+                    >
+                        <DisplayFont
+                            font={font}
+                            getFontName={props.getFontName}
+                        />
+                    </CustomFontButton>
+                ))}
                 {props.customFonts.map(font => (
                     <CustomFontButton
                         key={font.name}
@@ -235,7 +79,6 @@ const ModeToolsComponent = props => (
     >
         <span
             className={styles.displayedFontName}
-            style={props.font === "Bits and Bytes" ? { transform: "scale(0.5)", transformOrigin: "left" } : {}}
         >
             <DisplayFont
                 font={props.font}
@@ -262,23 +105,6 @@ ModeToolsComponent.propTypes = {
     })).isRequired,
     onHoverCustom: PropTypes.func.isRequired,
     onManageFonts: PropTypes.func,
-    onHoverChinese: PropTypes.func,
-    onHoverCurly: PropTypes.func,
-    onHoverHandwriting: PropTypes.func,
-    onHoverJapanese: PropTypes.func,
-    onHoverKorean: PropTypes.func,
-    onHoverMarker: PropTypes.func,
-    onHoverPixel: PropTypes.func,
-    onHoverPlayful: PropTypes.func,
-    onHoverBubbly: PropTypes.func,
-    onHoverBitsAndBytes: PropTypes.func,
-    onHoverTechnological: PropTypes.func,
-    onHoverArcade: PropTypes.func,
-    onHoverScratch: PropTypes.func,
-    onHoverArchivo: PropTypes.func,
-    onHoverArchivoBlack: PropTypes.func,
-    onHoverSansSerif: PropTypes.func,
-    onHoverSerif: PropTypes.func,
     onOpenDropdown: PropTypes.func
 };
 export default ModeToolsComponent;
