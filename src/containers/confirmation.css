@@ -10,13 +10,10 @@
 }
 
 .promptBox {
-    width: 540px;
-    height: 380px;
+    width: 548px;
+    height: 388px;
     background-color: white;
     border-radius: 8px;
-    outline-color: hsla(0, 0%, 100%, 0.25);
-    outline-width: 4px;
-    outline-style: solid;
     overflow: hidden;
     position: relative;
     color: black;
@@ -51,9 +48,7 @@
 }
 
 .promptButton:focus {
-    outline-color: hsla(194, 100%, 50%, 0.35);
-    outline-width: 4px;
-    outline-style: solid;
+    outline: none;
 }
 
 .accept {
@@ -65,7 +60,7 @@
     background-color: white;
     outline-width: 1px;
     outline-style: solid;
-    outline-color: rgba(0, 0, 0, 0.15);
+    outline-color: #d9d9d9;
     color: black;
 }
 

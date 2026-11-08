@@ -13,10 +13,10 @@
     flex-basis: 2rem;
     flex-shrink: 0;
     height: 100%;
-    border: 1px solid rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--ui-edge, #c6cdd6);
 }
 [theme="dark"] .color-button-swatch {
-    border-color: rgba(255, 255, 255, 0.25);
+    border-color: var(--ui-edge, #c6cdd6);
 }
 
 [dir="ltr"] .color-button-swatch {
@@ -72,7 +72,7 @@
     width: 0.75rem;
     height: 0.75rem;
     background: white;
-    border: 1px solid rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--ui-edge, #c6cdd6);
     /* Make sure it appears below the transparent icon */
     z-index: 1;
 }

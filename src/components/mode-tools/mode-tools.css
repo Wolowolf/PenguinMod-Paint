@@ -60,12 +60,12 @@
 .drop-item-shape-tool-label {
     width: 100%;
     font-size: 12px;
-    border-top: 1px solid rgba(0, 0, 0, 0.25);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    border-top: 1px solid var(--ui-edge, #c6cdd6);
+    border-bottom: 1px solid var(--ui-edge, #c6cdd6);
 }
 [theme="dark"] .drop-item-shape-tool-label {
-    border-top: 1px solid rgba(255, 255, 255, 0.25);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    border-top: 1px solid var(--ui-edge, #c6cdd6);
+    border-bottom: 1px solid var(--ui-edge, #c6cdd6);
 }
 
 /* TODO replace this when we add a brush selector dropdown */
