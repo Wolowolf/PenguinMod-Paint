@@ -14,12 +14,13 @@
 
 .handle {
     left: 100px;
-    width: 26px;
-    height: 26px;
-    margin-top: -2px;
+    /* desktop: no translucent ring; the handle is 4px larger on each side instead, same centre */
+    width: 34px;
+    height: 34px;
+    margin-top: -6px;
+    margin-left: -4px;
     position: absolute;
     background-color: white;
     border-radius: 100%;
-    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.15);
     touch-action: none;
 }
