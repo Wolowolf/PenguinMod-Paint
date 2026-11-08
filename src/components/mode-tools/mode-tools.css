@@ -39,11 +39,6 @@
     flex-wrap: wrap;
 }
 
-.flex-centerer {
-    align-items: center;
-    justify-content: center;
-}
-
 .drop-item-shape-tool-menu {
     width: 500px;
     align-items: flex-start;
@@ -106,22 +101,6 @@ $border-radius: 0.25rem;
     border-right: 1px solid $ui-pane-border;
     border-top-right-radius: $border-radius;
     border-bottom-right-radius: $border-radius;
-}
-
-[dir="ltr"] .button-group-button.mod-start-border {
-    border-left: 1px solid $ui-pane-border;
-}
-
-[dir="rtl"] .button-group-button.mod-start-border {
-    border-right: 1px solid $ui-pane-border;
-}
-
-[dir="ltr"] .button-group-button.mod-no-end-border {
-    border-right: none;
-}
-
-[dir="rtl"] .button-group-button.mod-no-end-border {
-    border-left: none;
 }
 
 .button-group-button-icon {
