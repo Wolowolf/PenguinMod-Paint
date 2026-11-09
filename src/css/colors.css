@@ -6,8 +6,11 @@ $ui-pane-border: var(--paint-ui-pane-border, #D9D9D9);
 
 $text-primary: var(--paint-text-primary, #575e75);
 
-$motion-primary: hsla(194, 100%, 50%);
-$motion-transparent: hsla(194, 100%, 50%, 0.35);
+/* desktop (section 219): the editor theme's accent (GUI pm-theme-colors.js) */
+$motion-primary: var(--ui-accent, hsla(194, 100%, 50%));
+$motion-transparent: color-mix(in srgb, $motion-primary 35%, transparent);
+$accent-symbol: var(--ui-accent-symbol, hsla(194, 100%, 50%)); /* accent as the colour of text and icons */
+$text-on-accent: var(--text-on-accent, #ffffff);
 
 $data-primary: #FF8C1A;
 

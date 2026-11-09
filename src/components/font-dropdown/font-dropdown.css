@@ -17,7 +17,7 @@
 
 .mod-menu-item:hover {
     background: $motion-primary;
-    color: white;
+    color: $text-on-accent;
 }
 .font-context-menu {
     display: grid;

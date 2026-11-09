@@ -169,7 +169,7 @@ $border-radius: 0.25rem;
     line-height: 1.5rem;
     font-size: calc(3 * $grid-unit);
     font-weight: bold;
-    color: white;
+    color: $text-on-accent;
     justify-content: center;
 }
 

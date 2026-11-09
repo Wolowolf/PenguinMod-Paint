@@ -87,7 +87,7 @@ body :global(.Popover) {
 }
 
 .active-swatch {
-    border: 1px solid #00c3ff;
+    border: 1px solid var(--ui-accent, #00c3ff);
 }
 
 /* desktop: no translucent ring; the active swatch is drawn 3px larger on each side instead (same layout place) */
