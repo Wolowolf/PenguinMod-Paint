@@ -360,6 +360,23 @@ const updateTheme = function (theme) {
 
     const outlineLayer = getOutlineLayer();
     outlineLayer.children[0].strokeColor = isDark ? OUTLINE_INNER_DARK : OUTLINE_INNER_LIGHT;
+
+    // Desktop fork (section 218): the area around the drawing is the editor's workspace colour
+    // (--ui-workspace of the GUI's theme colours). Read on the next frame: the page's theme
+    // attribute changes after this component hears of the new theme.
+    requestAnimationFrame(updateWorkspaceColor);
+};
+
+const updateWorkspaceColor = function () {
+    let color = '';
+    try {
+        color = getComputedStyle(document.documentElement).getPropertyValue('--ui-workspace').trim();
+    } catch (e) {
+        // no page styles: keep the theme's own colour
+    }
+    const backgroundGuideLayer = getBackgroundGuideLayer();
+    if (!color || !backgroundGuideLayer || !backgroundGuideLayer.vectorBackground) return;
+    backgroundGuideLayer.vectorBackground.children[0].fillColor = color;
 };
 
 const setupLayers = function (format) {
@@ -390,5 +407,6 @@ export {
     getRaster,
     setGuideItem,
     updateTheme,
+    updateWorkspaceColor,
     setupLayers
 };

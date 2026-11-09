@@ -5,8 +5,9 @@
     height: calc(100% - 2px);
     margin: auto;
     position: absolute;
-    background-color: #D9E3F2;
+    /* desktop (section 218): the editor's workspace colour */
+    background-color: var(--ui-workspace, #D9E3F2);
 }
 [data-paint-theme="dark"] .paper-canvas {
-    background-color: #222;
+    background-color: var(--ui-workspace, #222);
 }

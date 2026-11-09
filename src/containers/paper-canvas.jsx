@@ -9,7 +9,7 @@ import log from '../log/log';
 import {performSnapshot} from '../helper/undo';
 import {undoSnapshot, clearUndoState} from '../reducers/undo';
 import {isGroup, ungroupItems} from '../helper/group';
-import {clearRaster, convertBackgroundGuideLayer, getRaster, setupLayers, updateTheme} from '../helper/layer';
+import {clearRaster, convertBackgroundGuideLayer, getRaster, setupLayers, updateTheme, updateWorkspaceColor} from '../helper/layer';
 import {clearSelectedItems} from '../reducers/selected-items';
 import {
     ART_BOARD_WIDTH, ART_BOARD_HEIGHT, CENTER, MAX_WORKSPACE_BOUNDS,
@@ -65,6 +65,8 @@ class PaperCanvas extends React.Component {
         // Make layers.
         setupLayers(this.props.format);
         updateTheme(this.props.theme);
+        // Desktop fork (section 218): the GUI's "Theme colors" addon announces new colours
+        document.addEventListener('pm-theme-colors-changed', updateWorkspaceColor);
         this.importImage(
             this.props.imageFormat, this.props.image, this.props.rotationCenterX, this.props.rotationCenterY);
     }
@@ -83,6 +85,7 @@ class PaperCanvas extends React.Component {
         }
     }
     componentWillUnmount () {
+        document.removeEventListener('pm-theme-colors-changed', updateWorkspaceColor);
         this.clearQueuedImport();
         // shouldZoomToFit means the zoom level hasn't been initialized yet
         if (!this.shouldZoomToFit) {
