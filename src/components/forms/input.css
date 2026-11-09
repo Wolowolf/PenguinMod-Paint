@@ -16,6 +16,9 @@ Edited to add input-range-small
     font-family: var(--pm-font, "Atkinson Hyperlegible Next", sans-serif);
     font-size: 0.75rem;
     font-weight: bold;
+    /* desktop (section 220): the editor theme's button / input colour and its text */
+    background: var(--ui-surface, #ffffff);
+    --paint-text-primary: var(--text-on-surface, #575e75);
     color: $text-primary;
 
     border-width: 1px;
@@ -39,7 +42,7 @@ Edited to add input-range-small
     min-width: 0;
 }
 [theme="dark"] .input-form {
-    background: rgb(30, 30, 30);
+    background: var(--ui-surface, rgb(30, 30, 30));
     border-color: var(--ui-edge, #c6cdd6);
 }
 

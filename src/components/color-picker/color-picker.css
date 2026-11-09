@@ -35,11 +35,8 @@ body :global(.Popover) {
 .row-header {
     font-family: var(--pm-font, "Atkinson Hyperlegible Next", sans-serif);
     font-size: 0.65rem;
-    color: #575E75;
+    color: var(--text-on-surface, #575E75);
     margin: 8px 8px 0 8px;
-}
-[theme="dark"] .row-header {
-    color: #ccc;
 }
 
 .label-name {
@@ -47,11 +44,8 @@ body :global(.Popover) {
 }
 
 .divider {
-    border-top: 1px solid #ddd;
+    border-top: 1px solid var(--ui-edge, #ddd);
     margin: 8px;
-}
-[theme="dark"] .divider {
-    border-color: #333;
 }
 
 .swap-button {
