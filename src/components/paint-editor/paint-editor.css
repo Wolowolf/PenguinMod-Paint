@@ -169,8 +169,13 @@ $border-radius: 0.25rem;
     line-height: 1.5rem;
     font-size: calc(3 * $grid-unit);
     font-weight: bold;
-    color: $text-on-accent;
+    color: var(--text-primary);
     justify-content: center;
+    /* section 221: this background's text and symbol colours */
+    --text-primary: var(--text-on-accent);
+    --text-secondary: var(--text-dim-on-accent);
+    --ui-accent-symbol: var(--accent-on-accent);
+    --paint-text-primary: var(--text-on-accent);
 }
 
 [dir="ltr"] .bitmap-button-icon {

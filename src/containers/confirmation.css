@@ -12,21 +12,31 @@
 .promptBox {
     width: 548px;
     height: 388px;
-    background-color: white;
+    background-color: var(--ui-surface, white);
     border-radius: 8px;
     overflow: hidden;
     position: relative;
-    color: black;
+    color: var(--text-on-surface, black);
+    /* section 221: this background's text and symbol colours */
+    --text-primary: var(--text-on-surface);
+    --text-secondary: var(--text-dim-on-surface);
+    --ui-accent-symbol: var(--accent-on-surface);
+    --paint-text-primary: var(--text-on-surface);
 }
 
 .header {
     width: 100%;
     height: 3.125em;
-    background-color: hsla(194, 100%, 50%, 1);
+    background-color: var(--ui-accent, hsla(194, 100%, 50%, 1));
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
+    /* section 221: this background's text and symbol colours */
+    --text-primary: var(--text-on-accent);
+    --text-secondary: var(--text-dim-on-accent);
+    --ui-accent-symbol: var(--accent-on-accent);
+    --paint-text-primary: var(--text-on-accent);
 }
 
 .buttonRow {
@@ -52,25 +62,40 @@
 }
 
 .accept {
-    background-color: hsla(194, 100%, 50%, 1);
+    background-color: var(--ui-accent, hsla(194, 100%, 50%, 1));
     color: white;
+    /* section 221: this background's text and symbol colours */
+    --text-primary: var(--text-on-accent);
+    --text-secondary: var(--text-dim-on-accent);
+    --ui-accent-symbol: var(--accent-on-accent);
+    --paint-text-primary: var(--text-on-accent);
 }
 
 .deny {
-    background-color: white;
+    background-color: var(--ui-surface, white);
     outline-width: 1px;
     outline-style: solid;
     outline-color: #d9d9d9;
-    color: black;
+    color: var(--text-on-surface, black);
+    /* section 221: this background's text and symbol colours */
+    --text-primary: var(--text-on-surface);
+    --text-secondary: var(--text-dim-on-surface);
+    --ui-accent-symbol: var(--accent-on-surface);
+    --paint-text-primary: var(--text-on-surface);
 }
 
 .filePicker {
     border: 0;
-    background-color: hsla(194, 100%, 50%, 1);
+    background-color: var(--ui-accent, hsla(194, 100%, 50%, 1));
     border-radius: 4px;
     font-weight: 600;
     color: white;
     font-size: 0.85rem;
     padding: 0.75rem 1rem;
     cursor: pointer;
+    /* section 221: this background's text and symbol colours */
+    --text-primary: var(--text-on-accent);
+    --text-secondary: var(--text-dim-on-accent);
+    --ui-accent-symbol: var(--accent-on-accent);
+    --paint-text-primary: var(--text-on-accent);
 }
