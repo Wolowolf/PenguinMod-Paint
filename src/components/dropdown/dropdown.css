@@ -5,7 +5,7 @@
     border-radius: 5px;
     overflow: visible;
     min-width: 3.5rem;
-    color: $accent-symbol;
+    color: $text-primary;
     padding: .5rem;
 }
 
