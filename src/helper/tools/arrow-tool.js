@@ -1,10 +1,7 @@
 import paper from '@turbowarp/paper';
 import Modes from '../../lib/modes';
-import { styleShape } from '../style-path';
-import { clearSelection } from '../selection';
-import { getSquareDimensions } from '../math';
-import BoundingBoxTool from '../selection-tools/bounding-box-tool';
-import NudgeTool from '../selection-tools/nudge-tool';
+import {styleShape} from '../style-path';
+import ShapeTool from './shape-tool';
 
 const constructArrowPath = (left, lineWidth, lineLength, headWidth, headLength) => {
     if (typeof lineWidth !== "number") {
@@ -24,50 +21,17 @@ const constructArrowPath = (left, lineWidth, lineLength, headWidth, headLength) 
         return `M 0 ${lineWidth} H ${0 - lineLength} V ${headWidth} L ${0 - (lineLength + headLength)} 0 L ${0 - lineLength} ${0 - headWidth} V ${0 - lineWidth} H 0 Z`;
     }
     return `M 0 ${0 - lineWidth} H ${lineLength} V ${0 - headWidth} L ${lineLength + headLength} 0 L ${lineLength} ${headWidth} V ${lineWidth} H 0 Z`;
-}
+};
 
 /**
  * Tool for drawing arrows.
  */
-class ArrowTool extends paper.Tool {
-    static get TOLERANCE() {
-        return 2;
+class ArrowTool extends ShapeTool {
+    constructor (setSelectedItems, clearSelectedItems, setCursor, onUpdateImage) {
+        super(Modes.ARROW, setSelectedItems, clearSelectedItems, setCursor, onUpdateImage);
+        this.resetArrowState();
     }
-    /**
-     * @param {function} setSelectedItems Callback to set the set of selected items in the Redux state
-     * @param {function} clearSelectedItems Callback to clear the set of selected items in the Redux state
-     * @param {function} setCursor Callback to set the visible mouse cursor
-     * @param {!function} onUpdateImage A callback to call when the image visibly changes
-     */
-    constructor(setSelectedItems, clearSelectedItems, setCursor, onUpdateImage) {
-        super();
-        this.setSelectedItems = setSelectedItems;
-        this.clearSelectedItems = clearSelectedItems;
-        this.onUpdateImage = onUpdateImage;
-        this.boundingBoxTool = new BoundingBoxTool(
-            Modes.ARROW,
-            setSelectedItems,
-            clearSelectedItems,
-            setCursor,
-            onUpdateImage
-        );
-        const nudgeTool = new NudgeTool(Modes.ARROW, this.boundingBoxTool, onUpdateImage);
-
-        // We have to set these functions instead of just declaring them because
-        // paper.js tools hook up the listeners in the setter functions.
-        this.onMouseDown = this.handleMouseDown;
-        this.onMouseMove = this.handleMouseMove;
-        this.onMouseDrag = this.handleMouseDrag;
-        this.onMouseUp = this.handleMouseUp;
-        this.onKeyUp = nudgeTool.onKeyUp;
-        this.onKeyDown = nudgeTool.onKeyDown;
-
-        this.tri = null;
-        this.colorState = null;
-        this.isBoundingBoxMode = null;
-        this.active = false;
-
-        this.canModifyState = true;
+    resetArrowState () {
         this.arrowPathState = {
             length: 60,
             angle: 0,
@@ -77,89 +41,32 @@ class ArrowTool extends paper.Tool {
                 width: 60
             }
         };
-        this.arrowPathLocked = false;
-        this.arrowPathLockedState = {};
-        this.arrowPathLockedPositionSet = false;
-        this.arrowPathLockedPosition = { x: 0, y: 0 };
-    }
-    getHitOptions() {
-        return {
-            segments: true,
-            stroke: true,
-            curves: true,
-            fill: true,
-            guide: false,
-            match: hitResult =>
-                (hitResult.item.data && (hitResult.item.data.isScaleHandle || hitResult.item.data.isRotHandle)) ||
-                hitResult.item.selected, // Allow hits on bounding box and selected only
-            tolerance: ArrowTool.TOLERANCE / paper.view.zoom
-        };
-    }
-    /**
-     * Should be called if the selection changes to update the bounds of the bounding box.
-     * @param {Array<paper.Item>} selectedItems Array of selected items.
-     */
-    onSelectionChanged(selectedItems) {
-        this.boundingBoxTool.onSelectionChanged(selectedItems);
-    }
-    setColorState(colorState) {
-        this.colorState = colorState;
-    }
-    handleMouseDown(event) {
-        if (event.event.button > 0) return; // only first mouse button
-        this.active = true;
-
-        const pathOptions = {
-            length: 60,
-            angle: 0,
-            width: 24,
-            head: {
-                length: 60,
-                width: 60
-            }
-        };
-        this.arrowPathState = pathOptions;
         this.canModifyState = true;
         this.arrowPathLocked = false;
         this.arrowPathLockedState = {};
         this.arrowPathLockedPositionSet = false;
-        this.arrowPathLockedPosition = { x: 0, y: 0 };
-
-        if (this.boundingBoxTool.onMouseDown(
-            event, false /* clone */, false /* multiselect */, false /* doubleClicked */, this.getHitOptions())) {
-            this.isBoundingBoxMode = true;
-        } else {
-            this.isBoundingBoxMode = false;
-            clearSelection(this.clearSelectedItems);
-        }
+        this.arrowPathLockedPosition = {x: 0, y: 0};
     }
-
-    radToDeg(rad) {
+    onPress () {
+        this.resetArrowState();
+    }
+    radToDeg (rad) {
         return rad * 180 / Math.PI;
     }
-
-    calculateDirection(x1, y1, x2, y2) {
+    calculateDirection (x1, y1, x2, y2) {
         const dx = x2 - x1;
         const dy = y2 - y1;
         const direction = 90 - this.radToDeg(Math.atan2(dy, dx));
         return direction;
     }
-    calculateDistance(x1, y1, x2, y2) {
+    calculateDistance (x1, y1, x2, y2) {
         const dx = x2 - x1;
         const dy = y2 - y1;
         return Math.sqrt((dx * dx) + (dy * dy));
     }
-
-    handleMouseDrag(event) {
-        if (event.event.button > 0 || !this.active) return; // only first mouse button
-
-        if (this.isBoundingBoxMode) {
-            this.boundingBoxTool.onMouseDrag(event);
-            return;
-        }
-
-        if (this.tri) {
-            this.tri.remove();
+    drawShape (event) {
+        if (this.item) {
+            this.item.remove();
         }
 
         // set some stuff for locking if alt is pressed
@@ -229,7 +136,7 @@ class ArrowTool extends paper.Tool {
             }
         }
 
-        this.tri = new paper.Path(constructArrowPath(
+        this.item = new paper.Path(constructArrowPath(
             event.modifiers.control,
             pathOptions.width, pathOptions.length,
             pathOptions.head.width,
@@ -238,57 +145,28 @@ class ArrowTool extends paper.Tool {
 
         // create new position
         if ((!this.arrowPathLocked) && this.arrowPathLockedState) {
-            this.tri.position = event.downPoint;
+            this.item.position = event.downPoint;
 
             const dimensions = new paper.Point(event.point.getDistance(event.downPoint),0);
-            this.tri.position = event.downPoint.add(dimensions.multiply(0.5));
+            this.item.position = event.downPoint.add(dimensions.multiply(0.5));
         } else if (this.arrowPathLocked) {
-            this.tri.position = this.arrowPathLockedState;
+            this.item.position = this.arrowPathLockedState;
         }
 
         if (this.canModifyState) {
-            this.tri.rotate(pathOptions.angle, event.downPoint);
+            this.item.rotate(pathOptions.angle, event.downPoint);
         }
 
         this.arrowPathLockedState = {
-            x: this.tri.position.x,
-            y: this.tri.position.y,
+            x: this.item.position.x,
+            y: this.item.position.y,
         };
-        // console.log(this.arrowPathLockedState)
 
-        styleShape(this.tri, this.colorState);
+        styleShape(this.item, this.colorState);
     }
-    handleMouseUp(event) {
-        if (event.event.button > 0 || !this.active) return; // only first mouse button
-
-        if (this.isBoundingBoxMode) {
-            this.boundingBoxTool.onMouseUp(event);
-            this.isBoundingBoxMode = null;
-            return;
-        }
-
+    onRelease () {
         this.arrowPathLockedPositionSet = false;
-        this.arrowPathLockedPosition = { x: 0, y: 0 };
-
-        if (this.tri) {
-            if (this.tri.area < ArrowTool.TOLERANCE / paper.view.zoom) {
-                // Tiny arrow created unintentionally?
-                this.tri.remove();
-                this.tri = null;
-            } else {
-                this.tri.selected = true;
-                this.setSelectedItems();
-                this.onUpdateImage();
-                this.tri = null;
-            }
-        }
-        this.active = false;
-    }
-    handleMouseMove(event) {
-        this.boundingBoxTool.onMouseMove(event, this.getHitOptions());
-    }
-    deactivateTool() {
-        this.boundingBoxTool.deactivateTool();
+        this.arrowPathLockedPosition = {x: 0, y: 0};
     }
 }
 
