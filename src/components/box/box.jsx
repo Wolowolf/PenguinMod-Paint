@@ -1,7 +1,3 @@
-/* DO NOT EDIT
-@todo This file is copied from GUI and should be pulled out into a shared library.
-See https://github.com/LLK/scratch-paint/issues/13 */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import stylePropType from 'react-style-proptype';
@@ -101,8 +97,12 @@ Box.propTypes = {
     /**
      * A callback function whose first parameter is the underlying dom elements.
      * This call back will be executed immediately after the component is mounted or unmounted
+     * Can also be a ref of Element
      */
-    componentRef: PropTypes.func,
+    componentRef: PropTypes.oneOfType([
+        PropTypes.func,
+        PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+    ]),
     /** https://developer.mozilla.org/en-US/docs/Web/CSS/flex-direction */
     direction: PropTypes.oneOf([
         'row', 'row-reverse', 'column', 'column-reverse'
