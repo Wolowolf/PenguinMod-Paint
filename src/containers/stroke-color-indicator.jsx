@@ -1,3 +1,4 @@
+import {dispatchColorChange} from '../lib/make-color-style-reducer';
 import {connect} from 'react-redux';
 import {defineMessages} from 'react-intl';
 
@@ -43,13 +44,8 @@ const mapDispatchToProps = dispatch => ({
     onChangeColorIndex: index => {
         dispatch(changeColorIndex(index));
     },
-    onChangeColor: (strokeColor, index) => {
-        if (index === 0) {
-            dispatch(changeStrokeColor(strokeColor));
-        } else if (index === 1) {
-            dispatch(changeStrokeColor2(strokeColor));
-        }
-    },
+    onChangeColor: (strokeColor, index) =>
+        dispatchColorChange(dispatch, changeStrokeColor, changeStrokeColor2, strokeColor, index),
     onChangeStrokeWidth: strokeWidth => {
         dispatch(changeStrokeWidth(strokeWidth));
     },

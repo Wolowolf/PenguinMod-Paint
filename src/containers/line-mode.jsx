@@ -6,8 +6,8 @@ import bindAll from 'lodash.bindall';
 import Modes from '../lib/modes';
 import ColorStyleProptype from '../lib/color-style-proptype';
 import {clearSelection} from '../helper/selection';
-import {endPointHit, touching} from '../helper/snapping';
-import {drawHitPoint, removeHitPoint} from '../helper/guides';
+import {endPointHit, touching, updateEndPointHit} from '../helper/snapping';
+import {drawEndPointHit, removeHitPoint} from '../helper/guides';
 import {styleShape, MIXED} from '../helper/style-path';
 import {changeStrokeColor, clearStrokeGradient} from '../reducers/stroke-style';
 import {changeStrokeWidth} from '../reducers/stroke-width';
@@ -29,7 +29,6 @@ class LineMode extends React.Component {
         bindAll(this, [
             'activateTool',
             'deactivateTool',
-            'drawHitPoint',
             'onMouseDown',
             'onMouseMove',
             'onMouseDrag',
@@ -133,23 +132,8 @@ class LineMode extends React.Component {
             this.path.add(event.point); // Add second point, which is what will move when dragged
         }
     }
-    drawHitPoint (hitResult) {
-        // If near another path's endpoint, draw hit point to indicate that paths would merge
-        if (hitResult) {
-            const hitPath = hitResult.path;
-            if (hitResult.isFirst) {
-                drawHitPoint(hitPath.firstSegment.point);
-            } else {
-                drawHitPoint(hitPath.lastSegment.point);
-            }
-        }
-    }
     onMouseMove (event) {
-        if (this.hitResult) {
-            removeHitPoint();
-        }
-        this.hitResult = endPointHit(event.point, LineMode.SNAP_TOLERANCE);
-        this.drawHitPoint(this.hitResult);
+        this.hitResult = updateEndPointHit(this.hitResult, event.point, LineMode.SNAP_TOLERANCE);
     }
     onMouseDrag (event) {
         if (event.event.button > 0 || !this.active) return; // only first mouse button
@@ -194,7 +178,7 @@ class LineMode extends React.Component {
         // If near another path's endpoint, or this path's beginpoint, clip to it to suggest
         // joining/closing the paths.
         if (this.hitResult) {
-            this.drawHitPoint(this.hitResult);
+            drawEndPointHit(this.hitResult);
             this.path.lastSegment.point = this.hitResult.segment.point;
         } else {
             this.path.lastSegment.point = endPoint;

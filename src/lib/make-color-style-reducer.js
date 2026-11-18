@@ -92,4 +92,23 @@ const makeColorStyleReducer = ({
     }
 };
 
-export default makeColorStyleReducer;
+/**
+ * Dispatches a colour change for colour slot `index` (0: the colour, 1: the gradient's second colour).
+ * @param {function} dispatch Redux dispatch
+ * @param {function} changeColor action creator for slot 0
+ * @param {function} changeColor2 action creator for slot 1
+ * @param {string} color the new colour
+ * @param {number} index the colour slot
+ */
+const dispatchColorChange = function (dispatch, changeColor, changeColor2, color, index) {
+    if (index === 0) {
+        dispatch(changeColor(color));
+    } else if (index === 1) {
+        dispatch(changeColor2(color));
+    }
+};
+
+export {
+    makeColorStyleReducer as default,
+    dispatchColorChange
+};

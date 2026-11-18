@@ -84,58 +84,140 @@ class ScaleTool {
     }
     onMouseDrag (event) {
         if (!this.active) return;
+        if (this._dragSkew(event)) return;
+        let {sx, sy} = this._dragScaleFactors(event);
 
+        const signx = sx > 0 ? 1 : -1;
+        const signy = sy > 0 ? 1 : -1;
+        if (this.isCorner && !event.modifiers.shift) {
+            sx = sy = Math.max(Math.abs(sx), Math.abs(sy));
+            sx *= signx;
+            sy *= signy;
+        }
+        sx = signx * Math.max(Math.abs(sx), MIN_SCALE_FACTOR);
+        sy = signy * Math.max(Math.abs(sy), MIN_SCALE_FACTOR);
+        this.itemGroup.scale(sx / this.lastSx, sy / this.lastSy, this.pivot);
+        if (this.selectionAnchor) {
+            this.selectionAnchor.scale(this.lastSx / sx, this.lastSy / sy);
+        }
+        this.lastSx = sx;
+        this.lastSy = sy;
+    }
+    /**
+     * Shears the selection by (skx, sky) around its centre (alt held) or the opposite edge.
+     * @param {number} skx horizontal skew distance
+     * @param {number} sky vertical skew distance
+     */
+    _shear (skx, sky) {
+        if (skx === 0 && sky === 0) return;
         const skewBounds = this.skewBounds;
-        const doShear = (skx, sky) => {
-            if (skx === 0 && sky === 0) return;
 
-            let offcenterPosition;
-            if (!this.skewCenter) {
-                switch (this._getRectCornerNameByIndex(this.index)) {
-                case 'topCenter':
-                case 'leftCenter':
-                    offcenterPosition = this.itemGroup.position.add(
-                        new paper.Point(skewBounds.width / 2, skewBounds.height / 2)
-                    );
-                    break;
-                case 'bottomCenter':
-                case 'rightCenter':
-                    offcenterPosition = this.itemGroup.position.subtract(
-                        new paper.Point(skewBounds.width / 2, skewBounds.height / 2)
-                    );
-                    break;
-                }
+        let offcenterPosition;
+        if (!this.skewCenter) {
+            switch (this._getRectCornerNameByIndex(this.index)) {
+            case 'topCenter':
+            case 'leftCenter':
+                offcenterPosition = this.itemGroup.position.add(
+                    new paper.Point(skewBounds.width / 2, skewBounds.height / 2)
+                );
+                break;
+            case 'bottomCenter':
+            case 'rightCenter':
+                offcenterPosition = this.itemGroup.position.subtract(
+                    new paper.Point(skewBounds.width / 2, skewBounds.height / 2)
+                );
+                break;
             }
+        }
 
-            const position = this.skewCenter ? this.itemGroup.position : offcenterPosition;
+        const position = this.skewCenter ? this.itemGroup.position : offcenterPosition;
 
-            const shearMult = this.skewCenter ? 2 : 1;
-            // swap width and height because apparently
-            // shearing is based on the dimension perpendicular
-            // to the one that is being skewed
-            const shearX = (skx / skewBounds.height) * shearMult;
-            const shearY = (sky / skewBounds.width) * shearMult;
+        const shearMult = this.skewCenter ? 2 : 1;
+        // swap width and height because apparently
+        // shearing is based on the dimension perpendicular
+        // to the one that is being skewed
+        const shearX = (skx / skewBounds.height) * shearMult;
+        const shearY = (sky / skewBounds.width) * shearMult;
 
-            this.itemGroup.shear(shearX, shearY, position);
-            if (this.selectionAnchor) {
-                this.selectionAnchor.shear(-shearX, -shearY);
-            }
-        };
-
+        this.itemGroup.shear(shearX, shearY, position);
+        if (this.selectionAnchor) {
+            this.selectionAnchor.shear(-shearX, -shearY);
+        }
+    }
+    /**
+     * First part of a drag: undoes the last skew, then skews again when ctrl is held on a side handle.
+     * Also used by the paint-snap addon.
+     * @param {paper.ToolEvent} event the drag event
+     * @returns {boolean} true if this drag was a skew (nothing left to do)
+     */
+    _dragSkew (event) {
         // Revert skew
-        doShear(-this.lastSkx, -this.lastSky);
+        this._shear(-this.lastSkx, -this.lastSky);
 
         this.skewCenter = event.modifiers.alt;
-
-        let skx = 0;
-        let sky = 0;
         this.lastSkx = 0;
         this.lastSky = 0;
 
-        if (event.modifiers.control && !this.isCorner) {
-            // Skew
-            if (this.isSkew === false) {
-                // Reset position
+        if (!event.modifiers.control || this.isCorner) return false;
+        if (this.isSkew === false) {
+            // Reset position
+            this.centered = false;
+            this.itemGroup.scale(1 / this.lastSx, 1 / this.lastSy, this.pivot);
+            if (this.selectionAnchor) {
+                this.selectionAnchor.scale(this.lastSx, this.lastSy);
+            }
+            this.lastSx = 1;
+            this.lastSy = 1;
+        }
+
+        const delta = event.point.subtract(this.pivot);
+        switch (this._getRectCornerNameByIndex(this.index)) {
+        case 'topCenter':
+            delta.x *= -1;
+            delta.y = 0;
+            break;
+        case 'bottomCenter':
+            delta.y = 0;
+            break;
+        case 'leftCenter':
+            delta.y *= -1;
+            delta.x = 0;
+            break;
+        case 'rightCenter':
+            delta.x = 0;
+            break;
+        default:
+            delta.x = 0;
+            delta.y = 0;
+        }
+        this._shear(delta.x, delta.y);
+        this.lastSkx = delta.x;
+        this.lastSky = delta.y;
+        return true;
+    }
+    /**
+     * Scale part of a drag: moves the dragged corner and works out the unclamped scale factors.
+     * Also used by the paint-snap addon.
+     * @param {paper.ToolEvent} event the drag event
+     * @returns {{size: paper.Point, sx: number, sy: number}} the new size and scale factors
+     */
+    _dragScaleFactors (event) {
+        const point = event.point;
+        const bounds = getActionBounds(this.isBitmap);
+        point.x = Math.max(bounds.left, Math.min(point.x, bounds.right));
+        point.y = Math.max(bounds.top, Math.min(point.y, bounds.bottom));
+
+        if (!this.lastPoint) this.lastPoint = event.lastPoint;
+        const delta = point.subtract(this.lastPoint);
+        this.lastPoint = point;
+
+        if (event.modifiers.alt) {
+            this.centered = true;
+            this.itemGroup.position = this.origCenter;
+            this.pivot = this.origCenter;
+        } else {
+            if (this.centered) {
+                // Reset position if we were just in alt
                 this.centered = false;
                 this.itemGroup.scale(1 / this.lastSx, 1 / this.lastSy, this.pivot);
                 if (this.selectionAnchor) {
@@ -144,92 +226,23 @@ class ScaleTool {
                 this.lastSx = 1;
                 this.lastSy = 1;
             }
-
-            const delta = event.point.subtract(this.pivot);
-            switch (this._getRectCornerNameByIndex(this.index)) {
-            case 'topCenter':
-                delta.x *= -1;
-                delta.y = 0;
-                break;
-            case 'bottomCenter':
-                delta.y = 0;
-                break;
-            case 'leftCenter':
-                delta.y *= -1;
-                delta.x = 0;
-                break;
-            case 'rightCenter':
-                delta.x = 0;
-                break;
-            default:
-                delta.x = 0;
-                delta.y = 0;
-            }
-            skx = delta.x;
-            sky = delta.y;
-
-            doShear(skx, sky);
-        } else {
-            // Scale
-            const point = event.point;
-            const bounds = getActionBounds(this.isBitmap);
-            point.x = Math.max(bounds.left, Math.min(point.x, bounds.right));
-            point.y = Math.max(bounds.top, Math.min(point.y, bounds.bottom));
-
-            if (!this.lastPoint) this.lastPoint = event.lastPoint;
-            const delta = point.subtract(this.lastPoint);
-            this.lastPoint = point;
-
-            if (event.modifiers.alt) {
-                this.centered = true;
-                this.itemGroup.position = this.origCenter;
-                this.pivot = this.origCenter;
-            } else {
-                if (this.centered) {
-                    // Reset position if we were just in alt
-                    this.centered = false;
-                    this.itemGroup.scale(1 / this.lastSx, 1 / this.lastSy, this.pivot);
-                    if (this.selectionAnchor) {
-                        this.selectionAnchor.scale(this.lastSx, this.lastSy);
-                    }
-                    this.lastSx = 1;
-                    this.lastSy = 1;
-                }
-                this.pivot = this.origPivot;
-            }
-
-            this.corner = this.corner.add(delta);
-            let size = this.corner.subtract(this.pivot);
-            if (event.modifiers.alt) {
-                size = size.multiply(2);
-            }
-            let sx = 1.0;
-            let sy = 1.0;
-            if (Math.abs(this.origSize.x) > 0.0000001) {
-                sx = size.x / this.origSize.x;
-            }
-            if (Math.abs(this.origSize.y) > 0.0000001) {
-                sy = size.y / this.origSize.y;
-            }
-
-            const signx = sx > 0 ? 1 : -1;
-            const signy = sy > 0 ? 1 : -1;
-            if (this.isCorner && !event.modifiers.shift) {
-                sx = sy = Math.max(Math.abs(sx), Math.abs(sy));
-                sx *= signx;
-                sy *= signy;
-            }
-            sx = signx * Math.max(Math.abs(sx), MIN_SCALE_FACTOR);
-            sy = signy * Math.max(Math.abs(sy), MIN_SCALE_FACTOR);
-            this.itemGroup.scale(sx / this.lastSx, sy / this.lastSy, this.pivot);
-            if (this.selectionAnchor) {
-                this.selectionAnchor.scale(this.lastSx / sx, this.lastSy / sy);
-            }
-            this.lastSx = sx;
-            this.lastSy = sy;
+            this.pivot = this.origPivot;
         }
-        this.lastSkx = skx;
-        this.lastSky = sky;
+
+        this.corner = this.corner.add(delta);
+        let size = this.corner.subtract(this.pivot);
+        if (event.modifiers.alt) {
+            size = size.multiply(2);
+        }
+        let sx = 1.0;
+        let sy = 1.0;
+        if (Math.abs(this.origSize.x) > 0.0000001) {
+            sx = size.x / this.origSize.x;
+        }
+        if (Math.abs(this.origSize.y) > 0.0000001) {
+            sy = size.y / this.origSize.y;
+        }
+        return {size, sx, sy};
     }
     onMouseUp () {
         if (!this.active) return;

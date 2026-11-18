@@ -100,23 +100,24 @@ class ColorPicker extends React.Component {
             });
         }
     }
-    handleHueChange (hue) {
+    /**
+     * Changes part of the HSV colour (hue, saturation or brightness) and sends the new colour.
+     * @param {object} hsvPart e.g. {hue: 50}
+     */
+    changeHsv (hsvPart) {
         this.ensureNonZeroAlpha();
-        this.setState({hue: hue}, () => {
+        this.setState(hsvPart, () => {
             this.handleColorChange();
         });
+    }
+    handleHueChange (hue) {
+        this.changeHsv({hue});
     }
     handleSaturationChange (saturation) {
-        this.ensureNonZeroAlpha();
-        this.setState({saturation: saturation}, () => {
-            this.handleColorChange();
-        });
+        this.changeHsv({saturation});
     }
     handleBrightnessChange (brightness) {
-        this.ensureNonZeroAlpha();
-        this.setState({brightness: brightness}, () => {
-            this.handleColorChange();
-        });
+        this.changeHsv({brightness});
     }
     handleColorChange () {
         this.props.onChangeColor(hsvToHex(

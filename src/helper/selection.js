@@ -114,27 +114,25 @@ const setItemSelection = function (item, state, fullySelected) {
     
 };
 
-/** @return {boolean} true if anything was selected */
-const selectAllItems = function () {
+/**
+ * @param {function} select selects one root item (setItemSelection or selectItemSegments)
+ * @return {boolean} true if anything was selected
+ */
+const _selectAllWith = function (select) {
     const items = getAllSelectableRootItems();
     if (items.length === 0) return false;
-    
+
     for (let i = 0; i < items.length; i++) {
-        setItemSelection(items[i], true);
+        select(items[i], true);
     }
     return true;
 };
 
 /** @return {boolean} true if anything was selected */
-const selectAllSegments = function () {
-    const items = getAllSelectableRootItems();
-    if (items.length === 0) return false;
-    
-    for (let i = 0; i < items.length; i++) {
-        selectItemSegments(items[i], true);
-    }
-    return true;
-};
+const selectAllItems = () => _selectAllWith(setItemSelection);
+
+/** @return {boolean} true if anything was selected */
+const selectAllSegments = () => _selectAllWith(selectItemSegments);
 
 /** @param {!function} dispatchClearSelect Function to update the Redux select state */
 const clearSelection = function (dispatchClearSelect) {

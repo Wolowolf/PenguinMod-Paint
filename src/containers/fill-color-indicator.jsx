@@ -1,3 +1,4 @@
+import {dispatchColorChange} from '../lib/make-color-style-reducer';
 import {connect} from 'react-redux';
 import {defineMessages} from 'react-intl';
 
@@ -41,13 +42,8 @@ const mapDispatchToProps = dispatch => ({
     onChangeColorIndex: index => {
         dispatch(changeColorIndex(index));
     },
-    onChangeColor: (fillColor, index) => {
-        if (index === 0) {
-            dispatch(changeFillColor(fillColor));
-        } else if (index === 1) {
-            dispatch(changeFillColor2(fillColor));
-        }
-    },
+    onChangeColor: (fillColor, index) =>
+        dispatchColorChange(dispatch, changeFillColor, changeFillColor2, fillColor, index),
     onOpenColor: () => {
         dispatch(openFillColor());
     },

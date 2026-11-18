@@ -7,6 +7,7 @@ import {commitSelectionToBitmap} from '../bitmap';
 import BoundingBoxTool from '../selection-tools/bounding-box-tool';
 import NudgeTool from '../selection-tools/nudge-tool';
 import SelectionBoxTool from '../selection-tools/selection-box-tool';
+import VectorSelectTool from '../selection-tools/select-tool';
 
 /**
  * paper.Tool that handles select mode in bitmap. This is made up of 2 subtools.
@@ -108,15 +109,6 @@ class SelectTool extends paper.Tool {
             this.selectionBoxTool.onMouseDown(event.modifiers.shift);
         }
     }
-    handleMouseDrag (event) {
-        if (event.event.button > 0 || !this.active) return; // only first mouse button
-
-        if (this.selectionBoxMode) {
-            this.selectionBoxTool.onMouseDrag(event);
-        } else {
-            this.boundingBoxTool.onMouseDrag(event);
-        }
-    }
     handleMouseMove (event) {
         this.boundingBoxTool.onMouseMove(event, this.getHitOptions());
     }
@@ -146,5 +138,8 @@ class SelectTool extends paper.Tool {
         this.selectionBoxTool = null;
     }
 }
+
+// Same drag as the vector select tool (selection box or bounding box)
+SelectTool.prototype.handleMouseDrag = VectorSelectTool.prototype.handleMouseDrag;
 
 export default SelectTool;

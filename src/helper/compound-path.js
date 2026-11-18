@@ -1,3 +1,5 @@
+import {getParentIf} from './item';
+
 const isCompoundPath = function (item) {
     return item && item.className === 'CompoundPath';
 };
@@ -10,15 +12,7 @@ const isCompoundPathChild = function (item) {
 };
 
 
-const getItemsCompoundPath = function (item) {
-    const itemParent = item.parent;
-
-    if (isCompoundPath(itemParent)) {
-        return itemParent;
-    }
-    return null;
-    
-};
+const getItemsCompoundPath = item => getParentIf(item, isCompoundPath);
 
 export {
     isCompoundPath,

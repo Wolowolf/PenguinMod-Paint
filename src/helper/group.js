@@ -1,5 +1,5 @@
 import paper from '@turbowarp/paper';
-import {getRootItem, isGroupItem} from './item';
+import {getParentIf, getRootItem, isGroupItem} from './item';
 import {clearSelection, getSelectedRootItems, setItemSelection} from './selection';
 
 const isGroup = function (item) {
@@ -122,14 +122,7 @@ const ungroupSelection = function (clearSelectedItems, setSelectedItems, onUpdat
     ungroupItems(items, setSelectedItems, onUpdateImage);
 };
 
-const getItemsGroup = function (item) {
-    const itemParent = item.parent;
-
-    if (isGroup(itemParent)) {
-        return itemParent;
-    }
-    return null;
-};
+const getItemsGroup = item => getParentIf(item, isGroup);
 
 const isGroupChild = function (item) {
     const rootItem = getRootItem(item);

@@ -119,7 +119,19 @@ const drawHitPoint = function (point) {
     }
 };
 
+/**
+ * Marks the end point of another path that a line would join (if any).
+ * @param {?object} hitResult result of snapping.endPointHit
+ */
+const drawEndPointHit = function (hitResult) {
+    if (hitResult) {
+        const hitPath = hitResult.path;
+        drawHitPoint(hitResult.isFirst ? hitPath.firstSegment.point : hitPath.lastSegment.point);
+    }
+};
+
 export {
+    drawEndPointHit,
     hoverItem,
     hoverBounds,
     rectSelect,

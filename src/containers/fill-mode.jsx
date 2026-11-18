@@ -1,3 +1,4 @@
+import {dispatchColorChange} from '../lib/make-color-style-reducer';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
@@ -148,13 +149,8 @@ const mapDispatchToProps = dispatch => ({
     handleMouseDown: () => {
         dispatch(changeMode(Modes.FILL));
     },
-    onChangeFillColor: (fillColor, index) => {
-        if (index === 0) {
-            dispatch(changeFillColor(fillColor));
-        } else if (index === 1) {
-            dispatch(changeFillColor2(fillColor));
-        }
-    }
+    onChangeFillColor: (fillColor, index) =>
+        dispatchColorChange(dispatch, changeFillColor, changeFillColor2, fillColor, index)
 });
 
 export default connect(

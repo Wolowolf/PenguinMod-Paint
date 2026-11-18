@@ -400,6 +400,7 @@ export {
     hideGuideLayers,
     showGuideLayers,
     getDragCrosshairLayer,
+    _getLayer as getLayer,
     getGuideLayer,
     getBackgroundGuideLayer,
     convertBackgroundGuideLayer,

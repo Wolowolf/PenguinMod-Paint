@@ -1,5 +1,6 @@
 import paper from '@turbowarp/paper';
 import {getItems} from './selection';
+import {drawEndPointHit, removeHitPoint} from './guides';
 
 /**
  * @param {paper.Point} point1 point 1
@@ -53,7 +54,24 @@ const endPointHit = function (point, tolerance, excludePath) {
     return null;
 };
 
+/**
+ * On mouse move: replaces the marked end point (lastHit) with the one near `point`, if any.
+ * @param {?object} lastHit the current hit result
+ * @param {paper.Point} point the mouse point
+ * @param {number} tolerance distance for a hit
+ * @returns {?object} the new hit result
+ */
+const updateEndPointHit = function (lastHit, point, tolerance) {
+    if (lastHit) {
+        removeHitPoint();
+    }
+    const hitResult = endPointHit(point, tolerance);
+    drawEndPointHit(hitResult);
+    return hitResult;
+};
+
 export {
+    updateEndPointHit,
     endPointHit,
     touching
 };

@@ -1,10 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
-import bindAll from 'lodash.bindall';
 import Modes from '../lib/modes';
 import ColorStyleProptype from '../lib/color-style-proptype';
-import Blobbiness from '../helper/blob-tools/blob';
+import BlobMode from './blob-mode';
 import {MIXED} from '../helper/style-path';
 
 import {changeFillColor, clearFillGradient, DEFAULT_COLOR} from '../reducers/fill-style';
@@ -14,16 +13,7 @@ import {clearSelection} from '../helper/selection';
 
 import BrushModeComponent from '../components/brush-mode/brush-mode.jsx';
 
-class BrushMode extends React.Component {
-    constructor (props) {
-        super(props);
-        bindAll(this, [
-            'activateTool',
-            'deactivateTool'
-        ]);
-        this.blob = new Blobbiness(
-            this.props.onUpdateImage, this.props.clearSelectedItems);
-    }
+class BrushMode extends BlobMode {
     componentDidMount () {
         if (this.props.isBrushModeActive) {
             this.activateTool(this.props);
@@ -48,11 +38,6 @@ class BrushMode extends React.Component {
     shouldComponentUpdate (nextProps) {
         return nextProps.isBrushModeActive !== this.props.isBrushModeActive;
     }
-    componentWillUnmount () {
-        if (this.blob.tool) {
-            this.deactivateTool();
-        }
-    }
     activateTool () {
         // TODO: Instead of clearing selection, consider a kind of "draw inside"
         // analogous to how selection works with eraser
@@ -68,9 +53,6 @@ class BrushMode extends React.Component {
             ...this.props.colorState,
             ...this.props.brushModeState
         });
-    }
-    deactivateTool () {
-        this.blob.deactivateTool();
     }
     render () {
         return (

@@ -1,21 +1,7 @@
-import log from '../log/log';
+import {makeCornerSizeReducer} from './rect-mode';
 
 const CHANGE_ROUNDED_CORNER_SIZE = 'scratch-paint/rounded-rect-mode/CHANGE_ROUNDED_CORNER_SIZE';
-const initialState = {roundedCornerSize: 0};
-
-const reducer = function (state, action) {
-    if (typeof state === 'undefined') state = initialState;
-    switch (action.type) {
-        case CHANGE_ROUNDED_CORNER_SIZE:
-            if (isNaN(action.roundedCornerSize)) {
-                log.warn(`Invalid rounded corner size: ${action.roundedCornerSize}`);
-                return state;
-            }
-            return { roundedCornerSize: Math.floor(Math.max(0, action.roundedCornerSize)) };
-        default:
-            return state;
-    }
-};
+const reducer = makeCornerSizeReducer(CHANGE_ROUNDED_CORNER_SIZE);
 
 // Action creators ==================================
 const changeRoundedRectCornerSize = function (roundedCornerSize) {

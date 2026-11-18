@@ -64,7 +64,17 @@ const setPositionInView = function (item, pos) {
     item.position.y = paper.view.bounds.y + pos.y;
 };
 
+/**
+ * @param {paper.Item} item the item
+ * @param {function} test checks the parent
+ * @returns {?paper.Item} the item's parent if it passes `test`, else null
+ */
+const getParentIf = function (item, test) {
+    return test(item.parent) ? item.parent : null;
+};
+
 export {
+    getParentIf,
     isBoundsItem,
     isPathItem,
     isCompoundPathItem,

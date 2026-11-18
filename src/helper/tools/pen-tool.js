@@ -1,7 +1,7 @@
 import paper from '@turbowarp/paper';
 import {styleShape} from '../style-path';
-import {endPointHit, touching} from '../snapping';
-import {drawHitPoint, removeHitPoint} from '../guides';
+import {endPointHit, touching, updateEndPointHit} from '../snapping';
+import {drawEndPointHit, removeHitPoint} from '../guides';
 
 /**
  * Tool to handle freehand drawing of lines.
@@ -45,17 +45,6 @@ class PenTool extends paper.Tool {
     setSimplifySize (simplifySize) {
         this.simplifySize = simplifySize;
     }
-    drawHitPoint (hitResult) {
-        // If near another path's endpoint, draw hit point to indicate that paths would merge
-        if (hitResult) {
-            const hitPath = hitResult.path;
-            if (hitResult.isFirst) {
-                drawHitPoint(hitPath.firstSegment.point);
-            } else {
-                drawHitPoint(hitPath.lastSegment.point);
-            }
-        }
-    }
     handleMouseDown (event) {
         if (event.event.button > 0) return; // only first mouse button
         this.subpath = new paper.Path({insert: false});
@@ -95,11 +84,7 @@ class PenTool extends paper.Tool {
     handleMouseMove (event) {
         // If near another path's endpoint, or this path's beginpoint, clip to it to suggest
         // joining/closing the paths.
-        if (this.hitResult) {
-            removeHitPoint();
-        }
-        this.hitResult = endPointHit(event.point, PenTool.SNAP_TOLERANCE);
-        this.drawHitPoint(this.hitResult);
+        this.hitResult = updateEndPointHit(this.hitResult, event.point, PenTool.SNAP_TOLERANCE);
     }
     handleMouseDrag (event) {
         if (event.event.button > 0) return; // only first mouse button
@@ -124,7 +109,7 @@ class PenTool extends paper.Tool {
             this.hitResult = endPointHit(event.point, PenTool.SNAP_TOLERANCE, this.path);
         }
         if (this.hitResult) {
-            this.drawHitPoint(this.hitResult);
+            drawEndPointHit(this.hitResult);
         }
 
         this.path.add(event.point);

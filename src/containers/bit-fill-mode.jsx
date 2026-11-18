@@ -1,3 +1,4 @@
+import {dispatchColorChange} from '../lib/make-color-style-reducer';
 import PropTypes from 'prop-types';
 import Modes from '../lib/modes';
 import GradientTypes from '../lib/gradient-types';
@@ -38,13 +39,8 @@ export default makeModeContainer({
         changeGradientType: gradientType => {
             dispatch(changeGradientType(gradientType));
         },
-        onChangeFillColor: (fillColor, index) => {
-            if (index === 0) {
-                dispatch(changeFillColor(fillColor));
-            } else if (index === 1) {
-                dispatch(changeFillColor2(fillColor));
-            }
-        }
+        onChangeFillColor: (fillColor, index) =>
+            dispatchColorChange(dispatch, changeFillColor, changeFillColor2, fillColor, index)
     }),
     updateTool: (tool, nextProps, props) => {
         if (nextProps.color !== props.color) {
